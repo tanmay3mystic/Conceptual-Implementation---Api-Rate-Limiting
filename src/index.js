@@ -28,10 +28,7 @@ let finalMax = 100;
 
 app.get("/api/posts",(req,res)=>{
     
-    const timeOut = setTimeout(()=>{
-        apiCalls = 0
-        finalMax = 100 ; 
-    },30*1000);
+    
 
     let {max}=req.query;
     finalMax = Math.min(finalMax,max);
@@ -44,6 +41,11 @@ app.get("/api/posts",(req,res)=>{
         res.send(arr);
         apiCalls++;
     }
+
+    const timeOut = setTimeout(()=>{
+        apiCalls = 0
+        finalMax = 100 ; 
+    },30*1000);
 
 })
 
