@@ -24,25 +24,28 @@ app.use(middleWare);
 //get posts
 
 let apiCalls = 0;
-let finalMax = 10;
+let finalMax = 100;
 
 app.get("/api/posts",(req,res)=>{
     let {max}=req.query;
     finalMax = Math.min(finalMax,max);
-    if(apiCalls>6){
+    if(apiCalls>=5){
         res.status(429).send({message: "Exceed Number of API Calls"});
+        apiCalls++;
     }
     else{
         let arr = posts.filter((obj,idx)=>idx<finalMax);
         res.send(arr);
+        apiCalls++;
     }
 
-    
-
     const timeOut = setTimeout(()=>{
-        apiCalls++;
+        apiCalls = 0
         finalMax = 10 ; 
     },30*1000);
+    
+
+   
 
 })
 
