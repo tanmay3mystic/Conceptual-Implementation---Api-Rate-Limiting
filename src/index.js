@@ -46,7 +46,7 @@ app.get("/api/posts",(req,res)=>{
         InitialMax = max ; 
         setTimeout(()=>{
             apiCalls = 0;
-            finalMax = 100;
+            InitialMax = null;
         } , 30*1000);
     }else{
         apiCalls++;
