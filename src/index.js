@@ -15,7 +15,7 @@ app.use(bodyParser.json())
 // your code goes here
 const middleWare = (req,res,next)=>{
     if(req.url.startsWith("/api/posts")){
-        let {max}=req.query;
+        let max=req.query.max;
         req.query.max = Number(max)<21?Number(max):10;
     }
     next();
@@ -24,28 +24,33 @@ app.use(middleWare);
 //get posts
 
 let apiCalls = 0;
-let finalMax = 100;
+let initialMax = null;
 
 app.get("/api/posts",(req,res)=>{
-    
-    
-
-    let {max}=req.query;
-    finalMax = Math.min(finalMax,max);
     if(apiCalls>=5){
         res.status(429).send({message: "Exceed Number of API Calls"});
-        apiCalls++;
-    }
-    else{
-        let arr = posts.filter((obj,idx)=>idx<finalMax);
-        res.send(arr);
-        apiCalls++;
+        return ;
     }
 
-    const timeOut = setTimeout(()=>{
-        apiCalls = 0
-        finalMax = 100 ; 
-    },30*1000);
+    let finalMax = req.query.max;
+    
+    if(initialMax!==null) finalMax = Math.min(finalMax , max);
+
+    
+        const resArr = posts.filter((itm , idx)=>idx<finalMax)
+        res.send(resArr);
+    
+
+    if(initialMax===null){
+        apiCalls++;
+        InitialMax = max ; 
+        setTimeout(()=>{
+            apiCalls = 0;
+            finalMax = 100;
+        } , 30*1000);
+    }else{
+        apiCalls++;
+    }
 
 })
 
