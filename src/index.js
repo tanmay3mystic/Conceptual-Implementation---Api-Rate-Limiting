@@ -13,42 +13,43 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(bodyParser.json())
 // your code goes here
-const middleWare = (req,res,next)=>{
-    if(req.url.startsWith("/api/posts")){
-        let max=req.query.max;
-        req.query.max = Number(max)<21?Number(max):10;
+const middleWare = (req, res, next) => {
+    if (req.url.startsWith("/api/posts")) {
+        let max = req.query.max;
+        req.query.max = Number(max) < 21 ? Number(max) : 10;
     }
     next();
 }
-app.use(middleWare);
 //get posts
 
 let apiCalls = 0;
 let initialMax = null;
 
-app.get("/api/posts",(req,res)=>{
-    if(apiCalls>=5){
-        res.status(429).send({message: "Exceed Number of API Calls"});
-        return ;
+app.get("/api/posts", (req, res) => {
+    if (apiCalls >= 5) {
+        res.status(429).send({ message: "Exceed Number of API Calls" });
+        return;
     }
 
-    let finalMax = req.query.max;
-    
-    if(initialMax!==null) finalMax = Math.min(finalMax , max);
+    const parsedMax = Number(req.query.max || 10);
+    const max = parsedMax > 20 ? 10 : parsedMax;
+    let finalMax = max
 
-    
-        const resArr = posts.filter((itm , idx)=>idx<finalMax)
-        res.send(resArr);
-    
+    if (initialMax != null) finalMax = Math.min(finalMax, initialMax);
 
-    if(initialMax===null){
+
+    const resArr = posts.filter((itm, idx) => idx < finalMax)
+    res.send(resArr);
+
+
+    if (initialMax === null) {
         apiCalls++;
-        InitialMax = max ; 
-        setTimeout(()=>{
+        initialMax = max;
+        setTimeout(() => {
             apiCalls = 0;
-            InitialMax = null;
-        } , 30*1000);
-    }else{
+            initialMax = null;
+        }, 30 * 1000);
+    } else {
         apiCalls++;
     }
 
